@@ -20,7 +20,7 @@ url = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "&APPID=" + a
 def get_weather():
 	try:
 		jsonurl = urllib.urlopen(url)                      # open the url
-        api_text = json.loads(jsonurl.read())
+		api_text = json.loads(jsonurl.read())
 		weather_desc=api_text["weather"][0]["main"]
 		return weather_desc
 	except Exception as err:
@@ -81,13 +81,13 @@ while not mission_completed:
                 weather_info = get_weather()
                 if weather_info == "Clear":
                     spi.write('sunny\n')
-				if weather_info == "Clouds":
-					spi.write('cloudy\n')
-				if weather_info == "Rain":		
-					spi.write('lightning\n')
-					player.play(thunder)
-			except Exception as err2:
-				print ('spi write error: ',err2)
+		if weather_info == "Clouds":
+		    spi.write('cloudy\n')
+		if weather_info == "Rain":		
+		    spi.write('lightning\n')
+		    player.play(thunder)
+	    except Exception as err2:
+		print ('spi write error: ',err2)
         else:
             print 'unknown command, ignore.' 
         
