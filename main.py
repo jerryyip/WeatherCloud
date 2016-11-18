@@ -11,7 +11,7 @@ from respeaker.bing_speech_api import BingSpeechAPI
 from respeaker import spi
 from respeaker import Player
 
-import PyAudio
+import pyaudio
 
 import json
 import urllib
@@ -26,7 +26,7 @@ url = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "&APPID=" + a
 
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
-#hi = os.path.join(script_dir, 'audio/hi.wav')
+hi = os.path.join(script_dir, 'audio/hi.wav')
 #thunder = os.path.join(script_dir, 'audio/thunder-01.wav')
 pa = pyaudio.PyAudio()
 player = Player(pa)
@@ -53,7 +53,7 @@ def task(quit_event):
     while not quit_event.is_set():
         if mic.wakeup('respeaker'):
             print('Wake up')
-            #player.play(hi)
+            player.play(hi)
             data = mic.listen()
             try:
                 text = bing.recognize(data)
@@ -66,12 +66,15 @@ def task(quit_event):
                             if weather_info == "Clear":
                                 #set led yello
                                 spi.write(data = bytearray([1, 0, 50, 50]), address = 0x00)
+                                time.sleep(3)
                             if weather_info == "Clouds":
                                 #set led blue
                                 spi.write(data = bytearray([1, 50, 0, 0]), address = 0x00)
+                                time.sleep(3)
                             if weather_info == "Rain":      
                                 #set led green
                                 spi.write(data = bytearray([1, 0, 50, 0]), address = 0x00)
+                                time.sleep(3)
                                 #player.play(thunder)
                         except Exception as err2:
                             print ('spi write error: ',err2)
