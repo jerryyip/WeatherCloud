@@ -1,27 +1,22 @@
 import os
-
-
 import logging
 import time
 from threading import Thread, Event
-
 from respeaker import Microphone
 from respeaker.bing_speech_api import BingSpeechAPI
-
 from respeaker import spi
 from respeaker import Player
-
 import pyaudio
-
 import json
 import urllib
 
 # get a key from https://www.microsoft.com/cognitive-services/en-us/speech-api
 BING_KEY = 'c1fefcacc66842939663cc6a45058762'
 
-# weather information
+# weather information 
+# get appid from http://openweathermap.org/appid
 city="shenzhen"
-appID = "9e0ed3b5248bb3ed915c862b3a684e78"
+appID = ""
 url = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "&APPID=" + appID
 
 
@@ -62,20 +57,35 @@ def task(quit_event):
                     if 'weather' in text:
                         try:
                             weather_info = getWeather()
-                            print (weather_info)
+                            print ('The weather is *****%s***** in %s!' % weather_info, city)
                             if weather_info == "Clear":
-                                #set led yello
-                                spi.write(data = bytearray([1, 0, 50, 50]), address = 0x00)
+                                #set led golden as sun
+                                spi.write(data = bytearray([1, 34, 180, 240]), address = 0x00)
                                 time.sleep(3)
                             if weather_info == "Clouds":
-                                #set led blue
-                                spi.write(data = bytearray([1, 50, 0, 0]), address = 0x00)
+                                #set led blue as cloud
+                                spi.write(data = bytearray([1, 255, 245, 152]), address = 0x00)
                                 time.sleep(3)
                             if weather_info == "Rain":      
-                                #set led green
-                                spi.write(data = bytearray([1, 0, 50, 0]), address = 0x00)
-                                time.sleep(3)
-                                #player.play(thunder)
+                                #set led blink as thunder
+                                spi.write(data = bytearray([1, 255, 255, 255]), address = 0x00)
+                                time.sleep(0.1)
+                                spi.write(data = bytearray([0]), address = 0x00)
+                                time.sleep(0.2)
+                                spi.write(data = bytearray([1, 100, 100, 100]), address = 0x00)
+                                time.sleep(0.25)
+                                spi.write(data = bytearray([0]), address = 0x00)
+                                time.sleep(0.2)
+                                spi.write(data = bytearray([1, 255, 255, 255]), address = 0x00)
+                                time.sleep(0.1)
+                                spi.write(data = bytearray([0]), address = 0x00)
+                                time.sleep(0.2)
+                                spi.write(data = bytearray([1, 100, 100, 100]), address = 0x00)
+                                time.sleep(0.25)
+                                spi.write(data = bytearray([0]), address = 0x00)
+                                time.sleep(0.2)
+                                #play sound of thunder
+                                player.play(thunder)
                         except Exception as err2:
                             print ('spi write error: ',err2)
             except Exception as e:
